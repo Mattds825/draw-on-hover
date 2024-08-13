@@ -67,10 +67,20 @@ function update(t) {
         p.y += p.dy;
 
         // draw circle
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, 5, 0, 2 * Math.PI);
-        ctx.fill();
-    });
+        // ctx.beginPath();
+        // ctx.arc(p.x, p.y, 5, 0, 2 * Math.PI);
+        // ctx.fill();
 
+        // draw line
+        if (pIdx === 0) {
+            // start the line on the first point
+            ctx.beginPath();
+            ctx.moveTo(p.x, p.y);
+        } else {
+            // continue with new line segment to the following one
+            ctx.lineTo(p.x, p.y);
+        }
+    });
+    ctx.stroke();
     window.requestAnimationFrame(update);
 }
