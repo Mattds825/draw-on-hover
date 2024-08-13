@@ -7,8 +7,21 @@ const pointer = {
 };
 
 const params = {
+  pointsNumber: 30,
   spring: 0.4,
 };
+
+
+const trail = new Array(params.pointsNumber);
+for (let i = 0; i < params.pointsNumber; i++) {
+    trail[i] = {
+        x: pointer.x,
+        y: pointer.y,
+        dx: 0,
+        dy: 0,
+    }
+}
+
 
 window.addEventListener("click", (e) => {
   updateMousePosition(e.pageX, e.pageY);
@@ -32,21 +45,32 @@ function setupCanvas() {
   canvas.height = window.innerHeight;
 }
 
-const p = { x: 0, y: 0 }; // coordinate to draw
+// const p = { x: 0, y: 0 }; // coordinate to draw
+
+
 
 setupCanvas();
 update(0);
 
 function update(t) {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  // copy cursor position
-  p.x += (pointer.x - p.x) * params.spring;
-  p.y += (pointer.y - p.y) * params.spring;
-  // draw a dot
-  ctx.beginPath();
-  ctx.arc(p.x, p.y, 5, 0, 2 * Math.PI);
-  ctx.fill();
+    trail.forEach((p, pIdx) => {
+        const prev = pIdx === 0 ? pointer : trail[pIdx - 1];
+        const spring = pIdx === 0 ? .4 * params.spring : params.spring;
 
-  window.requestAnimationFrame(update);
+        // update coordidate values
+        p.dx = (prev.x - p.x) * spring;
+        p.dy = (prev.y - p.y) * spring;
+
+        p.x += p.dx;
+        p.y += p.dy;
+
+        // draw circle
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 5, 0, 2 * Math.PI);
+        ctx.fill();
+    });
+
+    window.requestAnimationFrame(update);
 }
