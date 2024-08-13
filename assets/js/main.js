@@ -76,6 +76,8 @@ function interpolate(color1, color2, percent) {
 function update(t) {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+  
+
   trail.forEach((p, pIdx) => {
     const prev = pIdx === 0 ? pointer : trail[pIdx - 1];
     const spring = pIdx === 0 ? 0.4 * params.spring : params.spring;
@@ -108,14 +110,16 @@ function update(t) {
 
   // Create a linear gradient from the first to the last point
   const gradient = ctx.createLinearGradient(
-    trail[0].x, trail[0].y,  // Start of the gradient at the first point
-    trail[trail.length - 1].x, trail[trail.length - 1].y  // End of the gradient at the last point
+    trail[0].x,
+    trail[0].y, // Start of the gradient at the first point
+    trail[trail.length - 1].x,
+    trail[trail.length - 1].y // End of the gradient at the last point
   );
-  
+
   // Define the color stops for the gradient
-  gradient.addColorStop(0, startColor);   // Start color
-  gradient.addColorStop(1, endColor);     // End color
-  
+  gradient.addColorStop(0, startColor); // Start color
+  gradient.addColorStop(1, endColor); // End color
+
   // Apply the gradient as the stroke style
   ctx.strokeStyle = gradient;
 
@@ -135,5 +139,32 @@ function update(t) {
   ctx.lineTo(trail[trail.length - 1].x, trail[trail.length - 1].y);
   ctx.stroke();
 
+  // Draw the paint bucket icon at the start of the stroke
+  drawPaintBucket(trail[0].x, trail[0].y);
+
   window.requestAnimationFrame(update);
+}
+
+// Function to draw the paint bucket icon
+function drawPaintBucket(x, y) {
+  // Create an offscreen canvas to draw the Font Awesome icon as an image
+  const offscreenCanvas = document.createElement("canvas");
+  offscreenCanvas.width = 32; // Width of the icon
+  offscreenCanvas.height = 32; // Height of the icon
+  const offscreenCtx = offscreenCanvas.getContext("2d");
+
+  // Draw the icon using Font Awesome
+  offscreenCtx.font = "24px FontAwesome";
+  offscreenCtx.fillStyle = "#000000"; // Icon color
+  offscreenCtx.textAlign = "center";
+  offscreenCtx.textBaseline = "middle";
+  offscreenCanvas.style = "white";
+  offscreenCtx.fillText(
+    "\uf576",
+    offscreenCanvas.width / 2,
+    offscreenCanvas.height / 2
+  ); // '\uf576' is the Unicode for the paint bucket icon
+
+  // Draw the icon on the main canvas
+  ctx.drawImage(offscreenCanvas, x - 32, y - 32, 32, 32); // Adjust the icon's position and size
 }
