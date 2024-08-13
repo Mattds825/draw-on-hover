@@ -75,11 +75,19 @@ function update(t) {
       // start the line on the first point
       ctx.beginPath();
       ctx.moveTo(p.x, p.y);
-    } else {
-      // continue with new line segment to the following one
-      ctx.lineTo(p.x, p.y);
     }
+    // else {
+    //   // continue with new line segment to the following one
+    //   ctx.lineTo(p.x, p.y);
+    // }
+    
   });
+  // smooth the curve
+  for (let i = 1; i < trail.length - 1; i++) {
+    const xc = 0.5 * (trail[i].x + trail[i + 1].x);
+    const yc = 0.5 * (trail[i].y + trail[i + 1].y);
+    ctx.quadraticCurveTo(trail[i].x, trail[i].y, xc, yc);
+  }
   ctx.stroke();
   window.requestAnimationFrame(update);
 }
